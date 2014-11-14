@@ -1,0 +1,14 @@
+# Node.js
+node_modules/
+npm-debug.log
+coverage
+
+# Mac OSX
+.DS_Store
+realsample.txt
+record.txt
+
+# Eclipse
+.project
+.settings
+*.md.html
