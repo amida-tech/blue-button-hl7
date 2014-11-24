@@ -1,5 +1,7 @@
 'use strict';
 
+var utils = require('./utils.js');
+
 var hl7 = require("../hl7/index.js");
 
 /*
@@ -75,8 +77,8 @@ function demographics(pid) {
 
     dm.dob = {
         "point": {
-            "date": pid["Date/Time of Birth"][0][0],
-            "precision": "day"
+            "date": utils.hl7ToISO(pid["Date/Time of Birth"][0][0]),
+            "precision": utils.hl7ToPrecision(pid["Date/Time of Birth"][0][0])
         }
     };
 
@@ -86,6 +88,70 @@ function demographics(pid) {
 
     return dm;
 }
+
+function results_panel(obr) {
+    var r = {};
+
+    r.result_set = {};
+    r.result_set.name = obr["Universal Service ID"][0][1];
+
+    //MORE of the same
+
+    return r;
+}
+
+function results_observation(obx, r) {
+    //initialize results array if it doesn't exist
+    if (!r.results) {
+        r.results = [];
+    }
+
+    /*
+            "result": {
+                "name": "HGB",
+                "code": "30313-1",
+                "code_system_name": "LOINC"
+            },
+            "date_time": {
+                "point": {
+                    "date": "2000-03-23T14:30:00Z",
+                    "precision": "minute"
+                }
+            },
+            "status": "completed",
+            "reference_range": {
+                "range": "M 13-18 g/dl; F 12-16 g/dl"
+            },
+            "interpretations": [
+                "Normal"
+            ],
+            "value": 13.2,
+            "unit": "g/dl"
+        },
+    */
+    //new observation
+    var obs = {}
+    obs.result = {};
+    obs.result.name = obx["Observation Identifier"][0][1];
+
+    obs.status = "completed"; //or obx["Observ Result Status"][0][0]; // ="F"?
+
+    obs.value = obx["Observation Value"][0][0];
+    obs.unit = obx["Units"][0][1];
+
+    obs.date_time = {};
+    obs.date_time.point = {
+        "date_time": utils.hl7ToISO(obx["Date/Time of the Observation"][0][0]),
+        "precision": utils.hl7ToPrecision(obx["Date/Time of the Observation"][0][0])
+    };
+
+    //MORE of the same
+
+
+    r.results.push(obs);
+    return r;
+}
+
 
 //takes HL7 data as string and translates it to Blue Button JSON
 function translate(data) {
@@ -100,6 +166,10 @@ function translate(data) {
 
         if (segment && segment["Segment"] === "PID") {
             bb["demographics"] = demographics(segment);
+        } else if (segment && segment["Segment"] === "OBR") {
+            bb["results"] = results_panel(segment);
+        } else if (segment && segment["Segment"] === "OBX") {
+            bb["results"] = results_observation(segment, bb["results"]);
         }
 
     }
