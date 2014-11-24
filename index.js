@@ -141,7 +141,7 @@ function results_observation(obx, r) {
 
     obs.date_time = {};
     obs.date_time.point = {
-        "date_time": utils.hl7ToISO(obx["Date/Time of the Observation"][0][0]),
+        "date": utils.hl7ToISO(obx["Date/Time of the Observation"][0][0]),
         "precision": utils.hl7ToPrecision(obx["Date/Time of the Observation"][0][0])
     };
 
