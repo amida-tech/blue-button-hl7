@@ -72,8 +72,8 @@ function demographics(pid) {
     var dm = {};
 
     dm.name = {};
-    dm.name.first = pid["Patient Name"][0][0];
-    dm.name.last = pid["Patient Name"][0][1];
+    dm.name.last = pid["Patient Name"][0][0];
+    dm.name.first = pid["Patient Name"][0][1];
 
     dm.dob = {
         "point": {
