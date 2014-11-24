@@ -97,13 +97,13 @@ function results_panel(obr) {
 
     //MORE of the same
 
-    return r;
+    return [r];
 }
 
 function results_observation(obx, r) {
     //initialize results array if it doesn't exist
-    if (!r.results) {
-        r.results = [];
+    if (!r[0].results) {
+        r[0].results = [];
     }
 
     /*
@@ -148,7 +148,7 @@ function results_observation(obx, r) {
     //MORE of the same
 
 
-    r.results.push(obs);
+    r[0].results.push(obs);
     return r;
 }
 
