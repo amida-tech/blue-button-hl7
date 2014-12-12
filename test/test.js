@@ -12,14 +12,11 @@ describe('parse.js test', function () {
         data = fs.readFileSync('./test/fixtures/isabella_jones_lipid_panel.txt').toString().split("\n").join("\r");
         data2 = fs.readFileSync('./test/fixtures/isabella_jones_multiple_tests.txt').toString().split("\n").join("\r");
 
-        console.log(fs.readFileSync('./test/fixtures/isabella_jones_lipid_panel.txt').toString());
+        console.log(data);
 
-        console.log(fs.readFileSync('./test/fixtures/isabella_jones_multiple_tests.txt').toString());
+        console.log("---");
+        console.log(data2);
 
-    });
-
-    it('should work', function () {
-        assert.notStrictEqual(undefined, bb7.translate(data));
     });
 
     it('translate', function () {
