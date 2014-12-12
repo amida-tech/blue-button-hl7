@@ -66,6 +66,9 @@ var hl7 = require("../hl7/index.js");
         "country": "US"
     },
 
+    SSN - <id extension="111-00-2330" root="2.16.840.1.113883.4.1"/>
+    Should go into identifiers section
+
 */
 
 function demographics(pid) {
@@ -82,7 +85,22 @@ function demographics(pid) {
         }
     };
 
+    if (pid["SSN Number – Patient"]) {
+        dm.identifiers = [];
+        dm.identifiers.push({
+            "identifier": "2.16.840.1.113883.4.1",
+            "extension": pid["SSN Number – Patient"][0][0]
+        });
+    }
+
     dm.gender = pid["Sex"][0][0];
+    if (dm.gender === 'F') {
+        dm.gender = "Female";
+    } else if (dm.gender === 'M') {
+        dm.gender = "Male";
+    } else if (dm.gender === 'U') {
+        dm.gender = "Unknown";
+    }
 
     //MORE of the same
 
@@ -92,20 +110,14 @@ function demographics(pid) {
 function results_panel(obr) {
     var r = {};
 
-    r.result_set = {};
-    r.result_set.name = obr["Universal Service ID"][0][1];
+    r.name = obr["Universal Service ID"][0][1];
 
     //MORE of the same
 
-    return [r];
+    return r;
 }
 
-function results_observation(obx, r) {
-    //initialize results array if it doesn't exist
-    if (!r[0].results) {
-        r[0].results = [];
-    }
-
+function results_observation(obx) {
     /*
             "result": {
                 "name": "HGB",
@@ -130,14 +142,19 @@ function results_observation(obx, r) {
         },
     */
     //new observation
-    var obs = {}
+    var obs = {};
     obs.result = {};
     obs.result.name = obx["Observation Identifier"][0][1];
 
     obs.status = "completed"; //or obx["Observ Result Status"][0][0]; // ="F"?
 
     obs.value = obx["Observation Value"][0][0];
-    obs.unit = obx["Units"][0][1];
+    //Units can be coded entry(CE)
+    if (obx["Units"][0].length === 1) {
+        obs.unit = obx["Units"][0][0];
+    } else {
+        obs.unit = obx["Units"][0][1];
+    }
 
     obs.date_time = {};
     obs.date_time.point = {
@@ -147,11 +164,8 @@ function results_observation(obx, r) {
 
     //MORE of the same
 
-
-    r[0].results.push(obs);
-    return r;
+    return obs;
 }
-
 
 //takes HL7 data as string and translates it to Blue Button JSON
 function translate(data) {
@@ -167,9 +181,19 @@ function translate(data) {
         if (segment && segment["Segment"] === "PID") {
             bb["demographics"] = demographics(segment);
         } else if (segment && segment["Segment"] === "OBR") {
-            bb["results"] = results_panel(segment);
+            if (!bb["results"]) {
+                bb["results"] = [];
+            }
+            bb["results"].push({
+                "result_set": results_panel(segment)
+            });
+
         } else if (segment && segment["Segment"] === "OBX") {
-            bb["results"] = results_observation(segment, bb["results"]);
+            var curr = bb["results"].length - 1;
+            if (!bb["results"][curr].results) {
+                bb["results"][curr].results = [];
+            }
+            bb["results"][curr].results.push(results_observation(segment));
         }
 
     }
