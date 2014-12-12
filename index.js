@@ -77,6 +77,9 @@ function demographics(pid) {
     dm.name = {};
     dm.name.last = pid["Patient Name"][0][0];
     dm.name.first = pid["Patient Name"][0][1];
+    if (pid["Patient Name"][0][2]) {
+        dm.name.middle = [pid["Patient Name"][0][2]];
+    }
 
     dm.dob = {
         "point": {
