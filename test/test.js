@@ -14,19 +14,19 @@ describe('parse.js test', function () {
         data = fs.readFileSync('./test/fixtures/isabella_jones_lipid_panel.txt').toString().split("\n").join("\r");
         data2 = fs.readFileSync('./test/fixtures/isabella_jones_multiple_tests.txt').toString().split("\n").join("\r");
 
-        console.log(data);
+        //console.log(data);
 
-        console.log("---");
-        console.log(data2);
+        //console.log("---");
+        //console.log(data2);
 
-        console.log(JSON.stringify(hl7.parseString(data), null, 4));
+        //console.log(JSON.stringify(hl7.parseString(data), null, 4));
 
     });
 
     it('translate', function () {
         var bb_json = bb7.translate(data);
 
-        console.log(JSON.stringify(bb_json, null, 4));
+        //console.log(JSON.stringify(bb_json, null, 4));
 
         assert.equal('JONES', bb_json['demographics']['name']['last']);
         assert.equal('ISABELLA', bb_json['demographics']['name']['first']);
@@ -37,10 +37,10 @@ describe('parse.js test', function () {
 
     });
 
-    xit('translate #2', function () {
+    it('translate #2', function () {
         var bb_json = bb7.translate(data2);
 
-        console.log(JSON.stringify(bb_json, null, 4));
+        //console.log(JSON.stringify(bb_json, null, 4));
 
         assert.equal('JONES', bb_json['demographics']['name']['last']);
         assert.equal('ISABELLA', bb_json['demographics']['name']['first']);

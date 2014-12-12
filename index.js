@@ -173,12 +173,9 @@ function translate(data) {
 
     var msg = hl7.translate(hl7.parseString(data));
 
-    console.log("msg>>>", msg);
-
     //process message by segment
     for (var seg in msg) {
         var segment = msg[seg];
-        console.log("segment>>", segment);
 
         if (segment && segment["Segment"] === "PID") {
             bb["demographics"] = demographics(segment);
