@@ -3,6 +3,8 @@ var assert = require('chai').assert;
 
 var fs = require("fs");
 
+var hl7 = require('hl7');
+
 var bb7 = require("../index.js");
 
 describe('parse.js test', function () {
@@ -16,6 +18,8 @@ describe('parse.js test', function () {
 
         console.log("---");
         console.log(data2);
+
+        console.log(JSON.stringify(hl7.parseString(data), null, 4));
 
     });
 
