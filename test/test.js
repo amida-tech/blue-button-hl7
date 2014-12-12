@@ -12,6 +12,10 @@ describe('parse.js test', function () {
         data = fs.readFileSync('./test/fixtures/isabella_jones_lipid_panel.txt').toString().split("\n").join("\r");
         data2 = fs.readFileSync('./test/fixtures/isabella_jones_multiple_tests.txt').toString().split("\n").join("\r");
 
+        console.log(fs.readFileSync('./test/fixtures/isabella_jones_lipid_panel.txt').toString());
+
+        console.log(fs.readFileSync('./test/fixtures/isabella_jones_multiple_tests.txt').toString());
+
     });
 
     it('should work', function () {
@@ -20,6 +24,8 @@ describe('parse.js test', function () {
 
     it('translate', function () {
         var bb = bb7.translate(data);
+
+        console.log(JSON.stringify(bb, null, 4));
 
         assert.equal('JONES', bb['demographics']['name']['last']);
         assert.equal('ISABELLA', bb['demographics']['name']['first']);
@@ -32,6 +38,8 @@ describe('parse.js test', function () {
 
     it('translate #2', function () {
         var bb = bb7.translate(data2);
+
+        console.log(JSON.stringify(bb, null, 4));
 
         assert.equal('JONES', bb['demographics']['name']['last']);
         assert.equal('ISABELLA', bb['demographics']['name']['first']);
