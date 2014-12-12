@@ -2,7 +2,7 @@
 
 var utils = require('./utils.js');
 
-var hl7 = require("../hl7/index.js");
+var hl7 = require("hl7");
 
 /*
 {
