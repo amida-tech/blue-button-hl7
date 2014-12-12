@@ -1,6 +1,6 @@
 {
   "name": "blue-button-hl7",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0",
   "description": "HL7 to Blue Button JSON translation",
   "main": "index.js",
   "scripts": {
