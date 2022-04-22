@@ -1,7 +1,11 @@
 # blue-button-hl7 Release Notes
 
+## v1.0.1 - April 21, 2022
 
-# v1.0.0 - December 12, 2014
+- Patch Update: Upgraded dev dependencies
+- Converted tests and coverages to jest
+
+## v1.0.0 - December 12, 2014
 
 This is the initial release of this library.
 

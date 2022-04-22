@@ -1,10 +1,31 @@
-blue-button-hl7
+Blue Button HL7
 ==========
 
 HL7 to Blue Button JSON translation
 
+[![NPM](https://nodei.co/npm/@amida-tech/blue-button-hl7.png)](https://nodei.co/npm/@amida-tech/blue-button-hl7/)
 
-##Usage
+[![Coverage Status](https://coveralls.io/repos/amida-tech/blue-button-hl7/badge.png)](https://coveralls.io/r/amida-tech/blue-button-hl7)
+
+## Quick up and running guide
+
+### Prerequisites
+
+- Node.js (v14.19+) and NPM
+- Grunt.js
+
+```
+# Install dependencies
+npm i
+
+# Install grunt
+npm i -g grunt
+
+# Test
+grunt
+```
+
+## Usage
 
 ```
 var fs = require('fs');
@@ -19,27 +40,13 @@ var bb = tr.translate(data);
 console.log(JSON.stringify(bb, null, 4));
 ```
 
-###Prerequisites
-
-- Node.js (v0.10+) and NPM
-- Grunt.js
-
-```
-# you need Node.js and Grunt.js installed
-
-#install dependencies and build
-npm install
-grunt
-
-```
-
 ## Contributing
 
 Contributors are welcome. See issues https://github.com/amida-tech/blue-button-hl7/issues
 
 ## Release Notes
 
-See release notes [here] (./RELEASENOTES.md)
+See release notes [here](./RELEASENOTES.md)
 
 ## License
 

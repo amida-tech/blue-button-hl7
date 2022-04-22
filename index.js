@@ -2,7 +2,7 @@
 
 var utils = require('./utils.js');
 
-var hl7 = require("hl7");
+var hl7 = require("@amida-tech/hl7");
 
 /*
 {
@@ -72,135 +72,135 @@ var hl7 = require("hl7");
 */
 
 function demographics(pid) {
-    var dm = {};
+  var dm = {};
 
-    dm.name = {};
-    dm.name.last = pid["Patient Name"][0][0];
-    dm.name.first = pid["Patient Name"][0][1];
-    if (pid["Patient Name"][0][2]) {
-        dm.name.middle = [pid["Patient Name"][0][2]];
+  dm.name = {};
+  dm.name.last = pid["Patient Name"][0][0];
+  dm.name.first = pid["Patient Name"][0][1];
+  if (pid["Patient Name"][0][2]) {
+    dm.name.middle = [pid["Patient Name"][0][2]];
+  }
+
+  dm.dob = {
+    "point": {
+      "date": utils.hl7ToISO(pid["Date/Time of Birth"][0][0]),
+      "precision": utils.hl7ToPrecision(pid["Date/Time of Birth"][0][0])
     }
+  };
 
-    dm.dob = {
-        "point": {
-            "date": utils.hl7ToISO(pid["Date/Time of Birth"][0][0]),
-            "precision": utils.hl7ToPrecision(pid["Date/Time of Birth"][0][0])
-        }
-    };
+  if (pid["SSN Number – Patient"]) {
+    dm.identifiers = [];
+    dm.identifiers.push({
+      "identifier": "2.16.840.1.113883.4.1",
+      "extension": pid["SSN Number – Patient"][0][0]
+    });
+  }
 
-    if (pid["SSN Number – Patient"]) {
-        dm.identifiers = [];
-        dm.identifiers.push({
-            "identifier": "2.16.840.1.113883.4.1",
-            "extension": pid["SSN Number – Patient"][0][0]
-        });
-    }
+  dm.gender = pid["Sex"][0][0];
+  if (dm.gender === 'F') {
+    dm.gender = "Female";
+  } else if (dm.gender === 'M') {
+    dm.gender = "Male";
+  } else if (dm.gender === 'U') {
+    dm.gender = "Unknown";
+  }
 
-    dm.gender = pid["Sex"][0][0];
-    if (dm.gender === 'F') {
-        dm.gender = "Female";
-    } else if (dm.gender === 'M') {
-        dm.gender = "Male";
-    } else if (dm.gender === 'U') {
-        dm.gender = "Unknown";
-    }
+  //MORE of the same
 
-    //MORE of the same
-
-    return dm;
+  return dm;
 }
 
 function results_panel(obr) {
-    var r = {};
+  var r = {};
 
-    r.name = obr["Universal Service ID"][0][1];
+  r.name = obr["Universal Service ID"][0][1];
 
-    //MORE of the same
+  //MORE of the same
 
-    return r;
+  return r;
 }
 
 function results_observation(obx) {
-    /*
-            "result": {
-                "name": "HGB",
-                "code": "30313-1",
-                "code_system_name": "LOINC"
-            },
-            "date_time": {
-                "point": {
-                    "date": "2000-03-23T14:30:00Z",
-                    "precision": "minute"
-                }
-            },
-            "status": "completed",
-            "reference_range": {
-                "range": "M 13-18 g/dl; F 12-16 g/dl"
-            },
-            "interpretations": [
-                "Normal"
-            ],
-            "value": 13.2,
-            "unit": "g/dl"
-        },
-    */
-    //new observation
-    var obs = {};
-    obs.result = {};
-    obs.result.name = obx["Observation Identifier"][0][1];
+  /*
+          "result": {
+              "name": "HGB",
+              "code": "30313-1",
+              "code_system_name": "LOINC"
+          },
+          "date_time": {
+              "point": {
+                  "date": "2000-03-23T14:30:00Z",
+                  "precision": "minute"
+              }
+          },
+          "status": "completed",
+          "reference_range": {
+              "range": "M 13-18 g/dl; F 12-16 g/dl"
+          },
+          "interpretations": [
+              "Normal"
+          ],
+          "value": 13.2,
+          "unit": "g/dl"
+      },
+  */
+  //new observation
+  var obs = {};
+  obs.result = {};
+  obs.result.name = obx["Observation Identifier"][0][1];
 
-    obs.status = "completed"; //or obx["Observ Result Status"][0][0]; // ="F"?
+  obs.status = "completed"; //or obx["Observ Result Status"][0][0]; // ="F"?
 
-    obs.value = obx["Observation Value"][0][0];
-    //Units can be coded entry(CE)
-    if (obx["Units"][0].length === 1) {
-        obs.unit = obx["Units"][0][0];
-    } else {
-        obs.unit = obx["Units"][0][1];
-    }
+  obs.value = obx["Observation Value"][0][0];
+  //Units can be coded entry(CE)
+  if (obx["Units"][0].length === 1) {
+    obs.unit = obx["Units"][0][0];
+  } else {
+    obs.unit = obx["Units"][0][1];
+  }
 
-    obs.date_time = {};
-    obs.date_time.point = {
-        "date": utils.hl7ToISO(obx["Date/Time of the Observation"][0][0]),
-        "precision": utils.hl7ToPrecision(obx["Date/Time of the Observation"][0][0])
-    };
+  obs.date_time = {};
+  obs.date_time.point = {
+    "date": utils.hl7ToISO(obx["Date/Time of the Observation"][0][0]),
+    "precision": utils.hl7ToPrecision(obx["Date/Time of the Observation"][0][0])
+  };
 
-    //MORE of the same
+  //MORE of the same
 
-    return obs;
+  return obs;
 }
 
 //takes HL7 data as string and translates it to Blue Button JSON
 function translate(data) {
-    var bb = {};
+  var bb = {};
 
-    var msg = hl7.translate(hl7.parseString(data));
+  var msg = hl7.translate(hl7.parseString(data));
 
-    //process message by segment
-    for (var seg in msg) {
-        var segment = msg[seg];
+  //process message by segment
+  for (var seg in msg) {
+    var segment = msg[seg];
 
-        if (segment && segment["Segment"] === "PID") {
-            bb["demographics"] = demographics(segment);
-        } else if (segment && segment["Segment"] === "OBR") {
-            if (!bb["results"]) {
-                bb["results"] = [];
-            }
-            bb["results"].push({
-                "result_set": results_panel(segment)
-            });
+    if (segment && segment["Segment"] === "PID") {
+      bb["demographics"] = demographics(segment);
+    } else if (segment && segment["Segment"] === "OBR") {
+      if (!bb["results"]) {
+        bb["results"] = [];
+      }
+      bb["results"].push({
+        "result_set": results_panel(segment)
+      });
 
-        } else if (segment && segment["Segment"] === "OBX") {
-            var curr = bb["results"].length - 1;
-            if (!bb["results"][curr].results) {
-                bb["results"][curr].results = [];
-            }
-            bb["results"][curr].results.push(results_observation(segment));
-        }
-
+    } else if (segment && segment["Segment"] === "OBX") {
+      var curr = bb["results"].length - 1;
+      if (!bb["results"][curr].results) {
+        bb["results"][curr].results = [];
+      }
+      bb["results"][curr].results.push(results_observation(segment));
     }
 
-    return bb;
+  }
+
+  return bb;
 }
 
 exports.translate = translate;
